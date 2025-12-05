@@ -10,10 +10,10 @@ let split xs =
 
 let rec tfold f xs =
   match xs with
-  | []       -> raise (Failure "nullary")
-  | [x]      -> x
-  | x :: xs' -> let (p,s) = split xs in
-                f (tfold f p) (tfold f s)
+  | []      -> raise (Failure "nullary")
+  | [x]     -> x
+  | _ :: _  -> let (p,s) = split xs in
+               f (tfold f p) (tfold f s)
 
 let trm s = Trm s
 let alts  = tfold (fun x y -> Alt (x,y))
@@ -22,7 +22,7 @@ let leq x = Leq x
 
 let rec ways n r =
   match r with
-  | Trm s     -> if n = 1 then 1 else 0
+  | Trm _     -> if n = 1 then 1 else 0
   | Alt (x,y) -> (ways n x) + (ways n y)
   | Seq (x,y) -> sum n (fun i -> (ways i x) * (ways (n-i) y)) 0
   | Leq x     -> sum n (fun i -> ways i x) 0
@@ -49,13 +49,3 @@ and kth_leq n k x m =
 let pick n r =
   let k = Random.int @@ (ways n r)+1 in
   kth n k r
-
-let () = 
-  let () = Random.self_init() in
-  let digits = List.map trm ["0";"1";"2";"3"] in
-  let alphas = List.map trm ["a";"b";"c"] in
-  print_endline@@ pick 8 @@ leq @@ seqs [
-    alts [Seq(seqs digits, trm "a"); Seq(trm "0", seqs alphas)];
-    trm ":";
-    alts digits;
-    alts alphas]

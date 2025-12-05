@@ -1,0 +1,4 @@
+(executable
+ (public_name reus)
+ (name main)
+ (libraries reus))
