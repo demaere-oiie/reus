@@ -47,5 +47,5 @@ and kth_leq n k x m =
               else kth_leq n (k-more) x (m+1)
 
 let pick n r =
-  let k = Random.int @@ (ways n r)+1 in
+  let k = Random.int @@ ways n r in
   kth n k r
