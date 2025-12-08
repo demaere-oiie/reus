@@ -1,2 +1,3 @@
 (library
- (name reus))
+ (name reus)
+ (libraries num))
