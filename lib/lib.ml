@@ -28,7 +28,8 @@ let rec ways n r v =
   | Alt (x,y) -> (ways n x v) + (ways n y v)
   | Seq (x,y) -> sum n (fun i ->
                      let l = ways i x v in
-                     let r = if l=0 then 0 else ways (n-i) y v in
+                     if l=0 then 0 else
+                     let r = ways (n-i) y v in
                      l * r) 0
   | Leq x     -> sum n (fun i -> ways (n-i) x v) 0
   | Ref (s,a) -> let c = Array.get a n in
@@ -56,6 +57,9 @@ and kth_leq n k x v m =
   if k < more then kth m k x v
               else kth_leq n (k-more) x v (m+1)
 
-let pick n v r =
+let gpick n v =
+  let (_,r) = List.nth v 0 in
   let k = Random.int @@ ways n r v in
   kth n k r v
+
+let pick n r = gpick n [("",r)]
