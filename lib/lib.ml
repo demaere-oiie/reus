@@ -20,14 +20,14 @@ let trm s = Trm s
 let alts  = tfold (fun x y -> Alt (x,y))
 let seqs  = tfold (fun x y -> Seq (x,y))
 let leq x = Leq x
-let ref s = Ref (s, let a = Array.make 32 (-1) in (Array.set a 0 0; a))
+let ref s = Ref (s, Array.make 32 (-1))
 
 let rec ways n r v =
   match r with
   | Trm _     -> if n = 1 then 1 else 0
   | Alt (x,y) -> (ways n x v) + (ways n y v)
-  | Seq (x,y) -> sum (n-1) (fun i -> (ways i x v) * (ways (n-i) y v)) 0
-  | Leq x     -> sum (n-1) (fun i -> ways i x v) 0
+  | Seq (x,y) -> sum n (fun i -> (ways i x v) * (ways (n-i) y v)) 0
+  | Leq x     -> sum n (fun i -> ways (n-i) x v) 0
   | Ref (s,a) -> let c = Array.get a n in
                  if c <> -1 then c else
                  (let u = ways n (List.assoc s v) v in

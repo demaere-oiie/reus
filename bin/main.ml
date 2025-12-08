@@ -9,8 +9,7 @@ let () =
     trm ":";
     alts digits;
     alts alphas];
-  let xpr = seqs [ alts [ alts digits; ref "sum" ];
-                   trm "*";
-                   alts [ alts digits; ref "sum" ] ] in
-  let sum = seqs [ ref "xpr"; trm "+"; ref "xpr" ] in
-  print_endline @@ pick 20 [("xpr",xpr);("sum",sum)] @@ leq @@ xpr
+  let lf  = alts [ alts digits; seqs [ trm "("; ref "sum"; trm ")" ]]  in
+  let pd  = alts [ lf; seqs [lf; trm "*"; lf] ] in
+  let sm  = alts [ pd; seqs [pd; trm "+"; pd] ] in
+  print_endline @@ pick 20 [("sum",sm)] @@ leq @@ sm
