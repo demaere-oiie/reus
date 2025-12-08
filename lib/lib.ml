@@ -26,13 +26,16 @@ let rec ways n r v =
   match r with
   | Trm _     -> if n = 1 then 1 else 0
   | Alt (x,y) -> (ways n x v) + (ways n y v)
-  | Seq (x,y) -> sum n (fun i -> (ways i x v) * (ways (n-i) y v)) 0
+  | Seq (x,y) -> sum n (fun i ->
+                     let l = ways i x v in
+                     let r = if l=0 then 0 else ways (n-i) y v in
+                     l * r) 0
   | Leq x     -> sum n (fun i -> ways (n-i) x v) 0
   | Ref (s,a) -> let c = Array.get a n in
                  if c <> -1 then c else
                  (let u = ways n (List.assoc s v) v in
                   Array.set a n u; u)
-and sum n f a = if n < 1 then a else sum (n-1) f (a + f n)
+and sum n f a = if n < 0 then a else sum (n-1) f (a + f n)
 
 let rec kth n k r v =
   match r with
