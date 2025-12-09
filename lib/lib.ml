@@ -25,12 +25,6 @@ let rec tfold f xs =
       let p, s = (List.take m xs, List.drop m xs) in
       f (tfold f p) (tfold f s)
 
-let trm s = Trm s
-let alts = tfold (fun x y -> Alt (x, y))
-let seqs = tfold (fun x y -> Seq (x, y))
-let leq x = Leq x
-let ref s = Ref (s, Array.make 64 !!(-1))
-
 let rec ways n r v =
   let rec sum n f a = if n < 0 then a else sum (n - 1) f (a +^ f n) in
   match r with
@@ -80,9 +74,34 @@ let rec bigrandom n =
   if n <^ c then !!(Random.int @@ int_of_big_int n)
   else ((bigrandom @@ (n /^ c)) *^ c) +^ !!(Random.full_int @@ int_of_big_int c)
 
-let gpick n v =
-  let _, r = List.nth v 0 in
-  let k = bigrandom @@ ways n r v in
-  kth n k r v
+module type ReusCfg = sig
+  val max_n : int
+end
 
-let pick n r = gpick n [ ("", r) ]
+module type Reus = sig
+  val trm : string -> re
+  val alts : re list -> re
+  val seqs : re list -> re
+  val leq : re -> re
+  val ref : string -> re
+  val pick : int -> re -> string
+  val gpick : int -> (string * re) list -> string
+end
+
+module Make (C : ReusCfg) : Reus = struct
+  let trm s = Trm s
+  let leq x = Leq x
+  let alts = tfold (fun x y -> Alt (x, y))
+  let seqs = tfold (fun x y -> Seq (x, y))
+
+  let ref s =
+    if C.max_n <> 0 then Ref (s, Array.make C.max_n !!(-1))
+    else raise (Failure "Ref in RE")
+
+  let gpick n v =
+    let _, r = List.nth v 0 in
+    let k = bigrandom @@ ways n r v in
+    kth n k r v
+
+  let pick n r = gpick n [ ("", r) ]
+end
