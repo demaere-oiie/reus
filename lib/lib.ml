@@ -16,6 +16,8 @@ type re =
   | Leq of re
   | Ref of string * big_int array
 
+(******************************************************************************)
+
 let rec tfold f xs =
   match xs with
   | [] -> raise (Failure "nullary")
@@ -73,6 +75,8 @@ let rec bigrandom n =
   let c = shift_left_big_int !!2 30 in
   if n <^ c then !!(Random.int @@ int_of_big_int n)
   else ((bigrandom @@ (n /^ c)) *^ c) +^ !!(Random.full_int @@ int_of_big_int c)
+
+(******************************************************************************)
 
 module type ReusCfg = sig
   val max_n : int
