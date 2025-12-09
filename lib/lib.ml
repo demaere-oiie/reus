@@ -16,16 +16,13 @@ type re =
   | Leq of re
   | Ref of string * big_int array
 
-let split xs =
-  let m = List.length xs / 2 in
-  (List.take m xs, List.drop m xs)
-
 let rec tfold f xs =
   match xs with
   | [] -> raise (Failure "nullary")
   | [ x ] -> x
   | _ :: _ ->
-      let p, s = split xs in
+      let m = List.length xs / 2 in
+      let p, s = (List.take m xs, List.drop m xs) in
       f (tfold f p) (tfold f s)
 
 let trm s = Trm s
@@ -33,9 +30,9 @@ let alts = tfold (fun x y -> Alt (x, y))
 let seqs = tfold (fun x y -> Seq (x, y))
 let leq x = Leq x
 let ref s = Ref (s, Array.make 64 !!(-1))
-let rec sum n f a = if n < 0 then a else sum (n - 1) f (a +^ f n)
 
 let rec ways n r v =
+  let rec sum n f a = if n < 0 then a else sum (n - 1) f (a +^ f n) in
   match r with
   | Trm _ -> if n = 1 then !!1 else !!0
   | Alt (x, y) -> ways n x v +^ ways n y v

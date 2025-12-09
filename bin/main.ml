@@ -12,13 +12,7 @@ let () =
          alts digits;
          alts alphas;
        ];
-  let lf =
-    alts
-      [
-        alts alphas;
-        seqs [ trm "("; ref "sum"; trm ")" ];
-      ]
-  in
+  let lf = alts [ alts alphas; seqs [ trm "("; ref "sum"; trm ")" ] ] in
   let pd = alts [ lf; seqs [ lf; trm "*"; lf ] ] in
   let sm = alts [ pd; seqs [ pd; trm "+"; pd ] ] in
   print_endline @@ gpick 20 [ ("", leq sm); ("sum", sm) ]
