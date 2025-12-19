@@ -1,4 +1,7 @@
 (executable
  (public_name reus)
  (name main)
- (libraries reus))
+ (libraries reus)
+ (modes exe js)
+ (js_of_ocaml (link_flags :standard --no-source-map))
+)
