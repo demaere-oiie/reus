@@ -1,6 +1,6 @@
 # REUS
 
-## Regular Expression Uniform Selectionk
+## Regular Expression Uniform Selection
 
 To select uniformly from regular expressions, invoke the `Make` functor with `max_n` set to 0:
 
