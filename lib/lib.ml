@@ -99,8 +99,8 @@ module Make (C : ReusCfg) : Reus = struct
   let seqs = tfold (fun x y -> Seq (x, y))
 
   let ref =
-    if C.max_n <> 0 then (fun s -> Ref (s, Array.make C.max_n !!(-1)))
-    else (fun _ -> raise (Failure "Ref in RE"))
+    if C.max_n <> 0 then fun s -> Ref (s, Array.make C.max_n !!(-1))
+    else fun _ -> raise (Failure "Ref in RE")
 
   let gpick n v =
     let _, r = List.nth v 0 in
